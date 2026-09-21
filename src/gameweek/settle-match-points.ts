@@ -38,7 +38,7 @@ export function settleMatchPoints(
   return { total };
 }
 
-function earnsCleanSheet(position: Position, match: MatchFacts): boolean {
+export function earnsCleanSheet(position: Position, match: MatchFacts): boolean {
   if (position !== "GK" && position !== "DEF") {
     return false;
   }
