@@ -24,7 +24,7 @@ const LINEUP_SIZE = 15;
 const STARTING_ELEVEN = 11;
 const LINEUP_CLUB_CAP = 3;
 const LINEUP_FORMATION = { GK: 1, DEF: 3, MID: 2, FWD: 1 } as const;
-const MAX_BASE_PACK_ATTEMPTS = 40;
+const MAX_BASE_PACK_ATTEMPTS = 200;
 
 export function generateGameweekPacks(
   playerCards: readonly PlayerCard[],
@@ -43,7 +43,7 @@ function generateBasePack(
 ): PlayerCard[] {
   for (let attempt = 0; attempt < MAX_BASE_PACK_ATTEMPTS; attempt++) {
     const pack = dealBasePack(playerCards, random);
-    if (allowsLegalLineup(pack)) {
+    if (pack !== null && allowsLegalLineup(pack)) {
       return pack;
     }
   }
@@ -53,28 +53,48 @@ function generateBasePack(
 function dealBasePack(
   playerCards: readonly PlayerCard[],
   random: () => number,
-): PlayerCard[] {
+): PlayerCard[] | null {
   const available = shuffle(playerCards, random);
   const pack: PlayerCard[] = [];
   const rarityLeft: Record<Rarity, number> = { ...RARITY_QUOTA };
 
   for (const position of POSITIONS) {
     for (let n = 0; n < POSITION_FLOOR[position]; n++) {
-      const chosen = drawMatchingCard(available, pack, (card) => {
+      const chosen = drawMatchingCard(available, (card) => {
         return card.position === position && rarityLeft[card.rarity] > 0;
       });
+      if (chosen === null) {
+        return null;
+      }
+      pack.push(chosen);
       rarityLeft[chosen.rarity] -= 1;
     }
   }
 
   for (const rarity of Object.keys(rarityLeft) as Rarity[]) {
     while (rarityLeft[rarity] > 0) {
-      drawMatchingCard(available, pack, (card) => card.rarity === rarity);
+      const chosen = drawMatchingCard(available, (card) => card.rarity === rarity);
+      if (chosen === null) {
+        return null;
+      }
+      pack.push(chosen);
       rarityLeft[rarity] -= 1;
     }
   }
 
   return shuffle(pack, random);
+}
+
+function drawMatchingCard(
+  available: PlayerCard[],
+  matches: (card: PlayerCard) => boolean,
+): PlayerCard | null {
+  const chosen = available.find(matches);
+  if (!chosen) {
+    return null;
+  }
+  available.splice(available.indexOf(chosen), 1);
+  return chosen;
 }
 
 function generateSkillPack(
@@ -105,25 +125,11 @@ function generateSkillPack(
   return shuffle(pack, random);
 }
 
-function drawMatchingCard(
-  available: PlayerCard[],
-  pack: PlayerCard[],
-  matches: (card: PlayerCard) => boolean,
-): PlayerCard {
-  const chosen = available.find(matches);
-  if (!chosen) {
-    throw new Error("catalogue cannot fill this Gameweek's Base pack");
-  }
-  available.splice(available.indexOf(chosen), 1);
-  pack.push(chosen);
-  return chosen;
+export function allowsLegalLineup(pool: readonly PlayerCard[]): boolean {
+  return searchLineup(pool, 0, [], new Map());
 }
 
-function allowsLegalLineup(pool: readonly PlayerCard[]): boolean {
-  return searchRoster(pool, 0, [], new Map());
-}
-
-function searchRoster(
+function searchLineup(
   pool: readonly PlayerCard[],
   index: number,
   chosen: PlayerCard[],
@@ -141,18 +147,18 @@ function searchRoster(
   if (used < LINEUP_CLUB_CAP) {
     clubCounts.set(card.club, used + 1);
     chosen.push(card);
-    if (searchRoster(pool, index + 1, chosen, clubCounts)) {
+    if (searchLineup(pool, index + 1, chosen, clubCounts)) {
       return true;
     }
     chosen.pop();
     clubCounts.set(card.club, used);
   }
 
-  return searchRoster(pool, index + 1, chosen, clubCounts);
+  return searchLineup(pool, index + 1, chosen, clubCounts);
 }
 
-function hasLegalStarters(roster: readonly PlayerCard[]): boolean {
-  const n = roster.length;
+function hasLegalStarters(lineup: readonly PlayerCard[]): boolean {
+  const n = lineup.length;
   for (let mask = 0; mask < 1 << n; mask++) {
     if (bitCount(mask) !== STARTING_ELEVEN) {
       continue;
@@ -160,7 +166,7 @@ function hasLegalStarters(roster: readonly PlayerCard[]): boolean {
     const starters: PlayerCard[] = [];
     for (let i = 0; i < n; i++) {
       if ((mask & (1 << i)) !== 0) {
-        starters.push(roster[i]!);
+        starters.push(lineup[i]!);
       }
     }
     if (isLegalStartingEleven(starters)) {
