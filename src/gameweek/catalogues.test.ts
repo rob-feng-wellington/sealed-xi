@@ -21,8 +21,8 @@ describe("season catalogues", () => {
   });
 
   it("publishes Rarity bands and starting-11 caps", () => {
-    expect(RARITY_BANDS).toEqual(["epic", "rare", "common"]);
-    expect(RARITY_CAPS).toEqual({ epic: 3, rare: 4 });
+    expect(RARITY_BANDS).toEqual(["epic", "superRare", "rare"]);
+    expect(RARITY_CAPS).toEqual({ epic: 3, superRare: 4 });
   });
 
   it("fixes a Club set at 11 named footballers", () => {

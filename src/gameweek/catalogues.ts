@@ -7,10 +7,10 @@ export const MATCH_POINTS = {
   red: -3,
 } as const;
 
-export const RARITY_BANDS = ["epic", "rare", "common"] as const;
+export const RARITY_BANDS = ["epic", "superRare", "rare"] as const;
 export type Rarity = (typeof RARITY_BANDS)[number];
 
-export const RARITY_CAPS = { epic: 3, rare: 4 } as const;
+export const RARITY_CAPS = { epic: 3, superRare: 4 } as const;
 
 export const CLUB_SET_SIZE = 11 as const;
 
