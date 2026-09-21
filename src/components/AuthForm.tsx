@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import type { AuthResult } from "../auth/types.js";
+import type { AuthResult, Manager } from "../auth/types.js";
 
 export type AuthMode = "sign-in" | "sign-up";
 
 export interface AuthFormProps {
   mode: AuthMode;
   onSubmit: (username: string) => Promise<AuthResult>;
-  onSuccess: () => void;
+  onSuccess: (manager: Manager) => void;
 }
 
 export function AuthForm({ mode, onSubmit, onSuccess }: AuthFormProps) {
@@ -21,7 +21,7 @@ export function AuthForm({ mode, onSubmit, onSuccess }: AuthFormProps) {
     try {
       const result = await onSubmit(username);
       if (result.kind === "ok") {
-        onSuccess();
+        onSuccess(result.manager);
       } else {
         setError(messageForResult(result.kind));
       }

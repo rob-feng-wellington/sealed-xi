@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useMemo, useState } from "react";
+import { readSessionManager, writeSessionManager } from "./store.js";
 import type { Manager } from "./types.js";
 
 export interface SessionContextValue {
@@ -10,11 +11,17 @@ export interface SessionContextValue {
 const SessionContext = createContext<SessionContextValue | undefined>(undefined);
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
-  const [manager, setManager] = useState<Manager | null>(null);
+  const [manager, setManager] = useState<Manager | null>(() => readSessionManager());
   const value = useMemo<SessionContextValue>(() => ({
     manager,
-    signIn: setManager,
-    signOut: () => setManager(null),
+    signIn: (next) => {
+      writeSessionManager(next);
+      setManager(next);
+    },
+    signOut: () => {
+      writeSessionManager(null);
+      setManager(null);
+    },
   }), [manager]);
   return (
     <SessionContext.Provider value={value}>

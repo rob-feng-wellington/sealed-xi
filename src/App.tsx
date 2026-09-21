@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { createAuthService, InMemoryAuthStore, SessionProvider, useSession } from "./auth/index.js";
+import { createAuthService, LocalStorageAuthStore, SessionProvider, useSession } from "./auth/index.js";
 import { AuthForm } from "./components/AuthForm.js";
 
-const authService = createAuthService(new InMemoryAuthStore());
+const authService = createAuthService(new LocalStorageAuthStore());
 
 function Home() {
-  const { manager, signOut } = useSession();
+  const { manager, signIn, signOut } = useSession();
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
-  const { signIn } = useSession();
   const [welcome, setWelcome] = useState(false);
 
   if (manager) {
@@ -39,11 +38,13 @@ function Home() {
             ? authService.signUp(username)
             : authService.signIn(username)
         }
-        onSuccess={() => {
+        onSuccess={(signedInManager) => {
           if (mode === "sign-up") {
             setWelcome(true);
             setMode("sign-in");
+            return;
           }
+          signIn(signedInManager);
         }}
       />
       <p className="text-center text-sm text-slate-400">

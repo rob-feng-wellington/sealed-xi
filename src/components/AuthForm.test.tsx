@@ -8,12 +8,13 @@ describe("AuthForm", () => {
   it("renders sign-in form and submits", async () => {
     const onSubmit = vi.fn(async (): Promise<AuthResult> => ({ kind: "ok", manager: { id: "1", username: "悟空" } }));
     const onSuccess = vi.fn();
+    const manager = { id: "1", username: "悟空" };
     render(<AuthForm mode="sign-in" onSubmit={onSubmit} onSuccess={onSuccess} />);
     fireEvent.change(screen.getByPlaceholderText("2-20 位字母、数字或中文"), {
       target: { value: "悟空" },
     });
     fireEvent.click(screen.getByRole("button", { name: /登录/ }));
-    await waitFor(() => expect(onSuccess).toHaveBeenCalled());
+    await waitFor(() => expect(onSuccess).toHaveBeenCalledWith(manager));
     expect(onSubmit).toHaveBeenCalledWith("悟空");
   });
 

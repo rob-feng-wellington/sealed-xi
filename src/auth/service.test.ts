@@ -1,6 +1,14 @@
+import React from "react";
 import { describe, it, expect, beforeEach } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { SessionProvider, useSession } from "./SessionContext.js";
 import { AuthService, createAuthService, validateUsername } from "./service.js";
-import { InMemoryAuthStore } from "./store.js";
+import {
+  InMemoryAuthStore,
+  LocalStorageAuthStore,
+  readSessionManager,
+  writeSessionManager,
+} from "./store.js";
 
 describe("AuthService", () => {
   let store: InMemoryAuthStore;
@@ -40,6 +48,63 @@ describe("AuthService", () => {
   it("rejects invalid username formats", async () => {
     const result = await auth.signUp("a");
     expect(result.kind).toBe("invalid-username");
+  });
+});
+
+describe("LocalStorageAuthStore", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("persists a created manager across store instances", async () => {
+    const first = new LocalStorageAuthStore();
+    await first.createManager("悟空");
+
+    const second = new LocalStorageAuthStore();
+    const manager = await second.getManagerByUsername("悟空");
+
+    expect(manager).toEqual({ id: "1", username: "悟空" });
+  });
+});
+
+describe("session storage", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("returns null when no session is stored", () => {
+    expect(readSessionManager()).toBeNull();
+  });
+
+  it("round-trips a manager and clears on sign out", () => {
+    const manager = { id: "1", username: "悟空" };
+    writeSessionManager(manager);
+    expect(readSessionManager()).toEqual(manager);
+    writeSessionManager(null);
+    expect(readSessionManager()).toBeNull();
+  });
+});
+
+function SessionReader() {
+  const { manager } = useSession();
+  return React.createElement("div", null, manager?.username ?? "signed-out");
+}
+
+describe("SessionProvider", () => {
+  beforeEach(() => {
+    localStorage.clear();
+  });
+
+  it("restores a signed-in manager on mount", () => {
+    writeSessionManager({ id: "1", username: "悟空" });
+    render(
+      React.createElement(
+        SessionProvider,
+        null,
+        React.createElement(SessionReader),
+      ),
+    );
+    expect(screen.getByText("悟空")).toBeInTheDocument();
   });
 });
 
