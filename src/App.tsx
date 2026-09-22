@@ -5,6 +5,7 @@ import {
   SessionProvider,
   useSession,
 } from "./auth/index.js";
+import { AlbumPanel } from "./components/AlbumPanel.js";
 import { AuthForm } from "./components/AuthForm.js";
 import { GameweekScreen } from "./components/GameweekScreen.js";
 import { LeagueGate } from "./components/LeagueGate.js";
@@ -12,10 +13,12 @@ import { LeagueHome } from "./components/LeagueHome.js";
 import { RevealPanel } from "./components/RevealPanel.js";
 import { TaskCapPanel } from "./components/TaskCapPanel.js";
 import {
+  createAlbumService,
   createPackService,
   createSettlementService,
   createTaskCapService,
   currentGameweekId,
+  LocalStorageAlbumStore,
   LocalStorageLineupStore,
   LocalStorageMatchFactsStore,
   LocalStoragePoolStore,
@@ -44,11 +47,13 @@ const settlementService = createSettlementService(
   new LocalStoragePoolStore(),
   new LocalStorageMatchFactsStore(),
 );
+const albumService = createAlbumService(new LocalStorageAlbumStore());
 
 function Home() {
   const { manager, signIn, signOut } = useSession();
   const [mode, setMode] = useState<"sign-in" | "sign-up">("sign-in");
   const [welcome, setWelcome] = useState(false);
+  const [albumRefresh, setAlbumRefresh] = useState(0);
   const [league, setLeague] = useState<League | null | undefined>(undefined);
 
   useEffect(() => {
@@ -155,6 +160,7 @@ function Home() {
         managerId={manager.id}
         gameweekId={gameweekId}
         packService={packService}
+        albumService={albumService}
         onTentativeSaved={() => {
           void taskCapService.markTentativeLineup(
             manager.id,
@@ -164,7 +170,13 @@ function Home() {
         }}
         onPoolOpened={() => {
           void taskCapService.ensureReward(manager.id, gameweekId);
+          setAlbumRefresh((value) => value + 1);
         }}
+      />
+      <AlbumPanel
+        managerId={manager.id}
+        albumService={albumService}
+        refreshKey={albumRefresh}
       />
       <RevealPanel
         league={league}

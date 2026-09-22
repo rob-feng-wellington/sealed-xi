@@ -13,6 +13,8 @@ export type SealedPool = {
   basePack: readonly PlayerCard[];
   skillPack: readonly SkillWager[];
   bonusPulls?: { player: number; skill: number };
+  /** Extra player pulls granted by a completed Album Club set. */
+  albumPulls?: number;
 };
 
 export function hasPlayingRights(pool: SealedPool, gameweekId: GameweekId): boolean {

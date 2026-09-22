@@ -18,17 +18,29 @@ export class PackService {
    * returned unchanged, so Playing rights survive a refresh but never roll over
    * into the next Gameweek.
    */
-  async openPacks(managerId: string, gameweekId: GameweekId): Promise<SealedPool> {
+  async openPacks(
+    managerId: string,
+    gameweekId: GameweekId,
+    extraPlayerPulls = 0,
+  ): Promise<SealedPool> {
     const existing = await this.store.getPool(managerId, gameweekId);
     if (existing) {
       return existing;
     }
     const packs = generateGameweekPacks(this.catalogue, this.skills, this.random);
+    const inPack = new Set(packs.basePack.map((card) => card.footballerName));
+    const candidates = this.catalogue.filter(
+      (card) => !inPack.has(card.footballerName),
+    );
     const pool: SealedPool = {
       managerId,
       gameweekId,
-      basePack: packs.basePack,
+      basePack: [
+        ...packs.basePack,
+        ...drawUnique(candidates, extraPlayerPulls, this.random),
+      ],
       skillPack: packs.skillPack,
+      ...(extraPlayerPulls > 0 ? { albumPulls: extraPlayerPulls } : {}),
     };
     await this.store.savePool(pool);
     return pool;

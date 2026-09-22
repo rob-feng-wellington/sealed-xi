@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
   createPackService,
   LocalStoragePoolStore,
+  type AlbumService,
   type LineupService,
   type PackService,
   type SealedPool,
@@ -17,6 +18,7 @@ interface GameweekScreenProps {
   gameweekId: string;
   packService?: PackService;
   lineupService?: LineupService;
+  albumService?: AlbumService;
   now?: Date;
   onTentativeSaved?: () => void;
   onPoolOpened?: () => void;
@@ -27,6 +29,7 @@ export function GameweekScreen({
   gameweekId,
   packService = defaultPackService,
   lineupService,
+  albumService,
   now,
   onTentativeSaved,
   onPoolOpened,
@@ -36,17 +39,26 @@ export function GameweekScreen({
 
   useEffect(() => {
     let cancelled = false;
-    packService.getPool(managerId, gameweekId).then((found) => {
-      if (!cancelled) setPool(found ?? null);
+    packService.getPool(managerId, gameweekId).then(async (found) => {
+      if (cancelled) return;
+      setPool(found ?? null);
+      if (found) {
+        // Stamp an already-open pool (idempotent) so the Album stays current.
+        await albumService?.recordDraw(managerId, gameweekId, found.basePack);
+        onPoolOpened?.();
+      }
     });
     return () => {
       cancelled = true;
     };
-  }, [managerId, gameweekId, packService]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [managerId, gameweekId, packService, albumService]);
 
   async function handleOpen() {
     setOpening(true);
-    const opened = await packService.openPacks(managerId, gameweekId);
+    const opened = albumService
+      ? await albumService.openGameweekPacks(managerId, gameweekId, packService)
+      : await packService.openPacks(managerId, gameweekId);
     setPool(opened);
     setOpening(false);
     onPoolOpened?.();

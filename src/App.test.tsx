@@ -69,6 +69,7 @@ describe("App", () => {
     expect(screen.getByText("本周任务")).toBeInTheDocument();
     expect(await screen.findByText("提交暂定阵容")).toBeInTheDocument();
     expect(screen.getByText("揭晓")).toBeInTheDocument();
+    expect(await screen.findByText("图鉴")).toBeInTheDocument();
   });
 
   it("opens this Gameweek's packs from the Private league home", async () => {

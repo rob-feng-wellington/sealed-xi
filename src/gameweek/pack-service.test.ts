@@ -101,6 +101,14 @@ describe("PackService.openPacks", () => {
     }
   });
 
+  it("adds an Album player pull without touching the Skill pack", async () => {
+    const pool = await service.openPacks("manager-1", "2025-W38", 1);
+
+    expect(pool.basePack).toHaveLength(25);
+    expect(pool.skillPack).toHaveLength(14);
+    expect(pool.albumPulls).toBe(1);
+  });
+
   it("uses only the frozen Skill catalogue", async () => {
     const pool = await service.openPacks("manager-1", "2025-W38");
     const frozen = new Set(SKILL_CATALOGUE.map((skill: SkillWager) => JSON.stringify(skill)));

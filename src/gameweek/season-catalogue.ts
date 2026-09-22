@@ -1,4 +1,4 @@
-import type { Rarity, SkillWager } from "./catalogues.ts";
+import type { ClubSet, Rarity, SkillWager } from "./catalogues.ts";
 import type { PlayerCard } from "./generate-packs.ts";
 import type { Position } from "./settle-match-points.ts";
 
@@ -153,3 +153,138 @@ export const FOOTBALLER_CATALOGUE: readonly PlayerCard[] = ENTRIES.map(
     rarity,
   }),
 );
+
+/**
+ * The published Club sets: 11 named footballers per Club for the Album. Not the
+ * whole squad, and a subset of the season catalogue.
+ */
+export const CLUB_SETS: readonly ClubSet[] = [
+  {
+    club: "Arsenal",
+    footballerNames: [
+      "David Raya",
+      "William Saliba",
+      "Gabriel Magalhaes",
+      "Jurrien Timber",
+      "Ben White",
+      "Bukayo Saka",
+      "Kai Havertz",
+      "Gabriel Martinelli",
+      "Declan Rice",
+      "Martin Odegaard",
+      "Mikel Merino",
+    ],
+  },
+  {
+    club: "Manchester City",
+    footballerNames: [
+      "Ederson",
+      "Ruben Dias",
+      "Josko Gvardiol",
+      "Manuel Akanji",
+      "Kyle Walker",
+      "Erling Haaland",
+      "Jeremy Doku",
+      "Savinho",
+      "Rodri",
+      "Kevin De Bruyne",
+      "Phil Foden",
+    ],
+  },
+  {
+    club: "Liverpool",
+    footballerNames: [
+      "Alisson",
+      "Virgil van Dijk",
+      "Trent Alexander-Arnold",
+      "Ibrahima Konate",
+      "Andrew Robertson",
+      "Mohamed Salah",
+      "Luis Diaz",
+      "Diogo Jota",
+      "Ryan Gravenberch",
+      "Alexis Mac Allister",
+      "Dominik Szoboszlai",
+    ],
+  },
+  {
+    club: "Chelsea",
+    footballerNames: [
+      "Moises Caicedo",
+      "Cole Palmer",
+      "Enzo Fernandez",
+      "Robert Sanchez",
+      "Levi Colwill",
+      "Reece James",
+      "Marc Cucurella",
+      "Wesley Fofana",
+      "Nicolas Jackson",
+      "Pedro Neto",
+      "Christopher Nkunku",
+    ],
+  },
+  {
+    club: "Tottenham",
+    footballerNames: [
+      "Cristian Romero",
+      "Micky van de Ven",
+      "Destiny Udogie",
+      "Pedro Porro",
+      "Guglielmo Vicario",
+      "Son Heung-min",
+      "Dominic Solanke",
+      "Brennan Johnson",
+      "Rodrigo Bentancur",
+      "James Maddison",
+      "Pape Matar Sarr",
+    ],
+  },
+  {
+    club: "Manchester United",
+    footballerNames: [
+      "Bruno Fernandes",
+      "Kobbie Mainoo",
+      "Casemiro",
+      "Andre Onana",
+      "Lisandro Martinez",
+      "Matthijs de Ligt",
+      "Diogo Dalot",
+      "Luke Shaw",
+      "Marcus Rashford",
+      "Rasmus Hojlund",
+      "Amad Diallo",
+    ],
+  },
+  {
+    club: "Newcastle United",
+    footballerNames: [
+      "Bruno Guimaraes",
+      "Joelinton",
+      "Sandro Tonali",
+      "Nick Pope",
+      "Sven Botman",
+      "Fabian Schar",
+      "Tino Livramento",
+      "Kieran Trippier",
+      "Alexander Isak",
+      "Anthony Gordon",
+      "Harvey Barnes",
+    ],
+  },
+  {
+    club: "Aston Villa",
+    footballerNames: [
+      "Emiliano Martinez",
+      "Ezri Konsa",
+      "Pau Torres",
+      "Matty Cash",
+      "Lucas Digne",
+      "John McGinn",
+      "Youri Tielemans",
+      "Morgan Rogers",
+      "Boubacar Kamara",
+      "Ollie Watkins",
+      "Leon Bailey",
+    ],
+  },
+];
