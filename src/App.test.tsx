@@ -80,5 +80,7 @@ describe("App", () => {
     );
     expect(screen.getByText("技能包 · 14 张")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "开启本周卡包" })).not.toBeInTheDocument();
+    expect(await screen.findByText("我的阵容")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "锁定阵容" })).toBeInTheDocument();
   });
 });

@@ -2,9 +2,11 @@ import React, { useEffect, useState } from "react";
 import {
   createPackService,
   LocalStoragePoolStore,
+  type LineupService,
   type PackService,
   type SealedPool,
 } from "../gameweek/index.ts";
+import { LineupBuilder } from "./LineupBuilder.tsx";
 import { PlayerCardView } from "./PlayerCardView.tsx";
 import { SkillCardView } from "./SkillCardView.tsx";
 
@@ -14,12 +16,16 @@ interface GameweekScreenProps {
   managerId: string;
   gameweekId: string;
   packService?: PackService;
+  lineupService?: LineupService;
+  now?: Date;
 }
 
 export function GameweekScreen({
   managerId,
   gameweekId,
   packService = defaultPackService,
+  lineupService,
+  now,
 }: GameweekScreenProps) {
   const [pool, setPool] = useState<SealedPool | null | undefined>(undefined);
   const [opening, setOpening] = useState(false);
@@ -86,6 +92,14 @@ export function GameweekScreen({
               ))}
             </div>
           </div>
+
+          <LineupBuilder
+            managerId={managerId}
+            gameweekId={gameweekId}
+            pool={pool}
+            lineupService={lineupService}
+            now={now}
+          />
         </>
       )}
     </section>

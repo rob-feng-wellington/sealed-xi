@@ -9,3 +9,37 @@ export { BAND_LABELS, describeSkill } from "./skill-text.ts";
 export { FOOTBALLER_CATALOGUE } from "./season-catalogue.ts";
 export type { PlayerCard, GameweekPacks } from "./generate-packs.ts";
 export type { SkillWager } from "./catalogues.ts";
+
+export {
+  DEADLINE_LEAD_MINUTES,
+  deadlineForGameweek,
+  deadlineFromFirstKickoff,
+  isPastDeadline,
+  scheduledFirstKickoff,
+} from "./deadline.ts";
+export {
+  BENCH_COUNT,
+  CLUB_CAP,
+  FORMATION,
+  STARTER_COUNT,
+  addBench,
+  addStarter,
+  emptyDraft,
+  isLegalLineup,
+  lineupRole,
+  moveBench,
+  removeFromLineup,
+  setCaptain,
+  setSkill,
+  skillKey,
+  toLockedLineup,
+  validateLineup,
+} from "./lineup.ts";
+export type { LineupDraft, LineupIssue, LineupRole } from "./lineup.ts";
+export type { LineupState, LineupStatus, LineupStore } from "./lineup-store.ts";
+export {
+  InMemoryLineupStore,
+  LocalStorageLineupStore,
+} from "./lineup-store.ts";
+export { LineupService, createLineupService } from "./lineup-service.ts";
+export type { LineupResult } from "./lineup-service.ts";
