@@ -1,0 +1,155 @@
+import type { Rarity, SkillWager } from "./catalogues.ts";
+import type { PlayerCard } from "./generate-packs.ts";
+import type { Position } from "./settle-match-points.ts";
+
+type CatalogueEntry = readonly [name: string, club: string, position: Position, rarity: Rarity];
+
+// Published season table the domain reads. Names are written Latin only; no
+// crests, kits, portraits, or league marks. Rarity is seeded from expected
+// minutes and goals, one Rarity per footballer for the season.
+const ENTRIES: readonly CatalogueEntry[] = [
+  // Arsenal
+  ["David Raya", "Arsenal", "GK", "epic"],
+  ["Kepa Arrizabalaga", "Arsenal", "GK", "rare"],
+  ["William Saliba", "Arsenal", "DEF", "epic"],
+  ["Gabriel Magalhaes", "Arsenal", "DEF", "superRare"],
+  ["Jurrien Timber", "Arsenal", "DEF", "superRare"],
+  ["Ben White", "Arsenal", "DEF", "rare"],
+  ["Riccardo Calafiori", "Arsenal", "DEF", "rare"],
+  ["Bukayo Saka", "Arsenal", "FWD", "epic"],
+  ["Kai Havertz", "Arsenal", "FWD", "superRare"],
+  ["Gabriel Martinelli", "Arsenal", "FWD", "superRare"],
+  ["Declan Rice", "Arsenal", "MID", "superRare"],
+  ["Martin Odegaard", "Arsenal", "MID", "superRare"],
+  ["Mikel Merino", "Arsenal", "MID", "rare"],
+  ["Thomas Partey", "Arsenal", "MID", "rare"],
+  ["Ethan Nwaneri", "Arsenal", "MID", "rare"],
+
+  // Manchester City
+  ["Ederson", "Manchester City", "GK", "superRare"],
+  ["Stefan Ortega", "Manchester City", "GK", "rare"],
+  ["Ruben Dias", "Manchester City", "DEF", "epic"],
+  ["Josko Gvardiol", "Manchester City", "DEF", "superRare"],
+  ["Manuel Akanji", "Manchester City", "DEF", "superRare"],
+  ["Kyle Walker", "Manchester City", "DEF", "rare"],
+  ["Nathan Ake", "Manchester City", "DEF", "rare"],
+  ["Erling Haaland", "Manchester City", "FWD", "epic"],
+  ["Jeremy Doku", "Manchester City", "FWD", "superRare"],
+  ["Savinho", "Manchester City", "FWD", "superRare"],
+  ["Rodri", "Manchester City", "MID", "epic"],
+  ["Kevin De Bruyne", "Manchester City", "MID", "epic"],
+  ["Phil Foden", "Manchester City", "MID", "epic"],
+  ["Bernardo Silva", "Manchester City", "MID", "superRare"],
+  ["Mateo Kovacic", "Manchester City", "MID", "rare"],
+
+  // Liverpool
+  ["Alisson", "Liverpool", "GK", "epic"],
+  ["Caoimhin Kelleher", "Liverpool", "GK", "rare"],
+  ["Virgil van Dijk", "Liverpool", "DEF", "epic"],
+  ["Trent Alexander-Arnold", "Liverpool", "DEF", "epic"],
+  ["Ibrahima Konate", "Liverpool", "DEF", "superRare"],
+  ["Andrew Robertson", "Liverpool", "DEF", "superRare"],
+  ["Joe Gomez", "Liverpool", "DEF", "rare"],
+  ["Mohamed Salah", "Liverpool", "FWD", "epic"],
+  ["Luis Diaz", "Liverpool", "FWD", "superRare"],
+  ["Diogo Jota", "Liverpool", "FWD", "superRare"],
+  ["Ryan Gravenberch", "Liverpool", "MID", "superRare"],
+  ["Alexis Mac Allister", "Liverpool", "MID", "superRare"],
+  ["Dominik Szoboszlai", "Liverpool", "MID", "superRare"],
+  ["Curtis Jones", "Liverpool", "MID", "rare"],
+  ["Wataru Endo", "Liverpool", "MID", "rare"],
+
+  // Chelsea
+  ["Moises Caicedo", "Chelsea", "MID", "epic"],
+  ["Cole Palmer", "Chelsea", "MID", "epic"],
+  ["Enzo Fernandez", "Chelsea", "MID", "superRare"],
+  ["Romeo Lavia", "Chelsea", "MID", "rare"],
+  ["Kiernan Dewsbury-Hall", "Chelsea", "MID", "rare"],
+  ["Robert Sanchez", "Chelsea", "GK", "rare"],
+  ["Filip Jorgensen", "Chelsea", "GK", "rare"],
+  ["Levi Colwill", "Chelsea", "DEF", "superRare"],
+  ["Reece James", "Chelsea", "DEF", "superRare"],
+  ["Marc Cucurella", "Chelsea", "DEF", "superRare"],
+  ["Wesley Fofana", "Chelsea", "DEF", "rare"],
+  ["Tosin Adarabioyo", "Chelsea", "DEF", "rare"],
+  ["Nicolas Jackson", "Chelsea", "FWD", "superRare"],
+  ["Pedro Neto", "Chelsea", "FWD", "superRare"],
+  ["Christopher Nkunku", "Chelsea", "FWD", "superRare"],
+
+  // Tottenham
+  ["Cristian Romero", "Tottenham", "DEF", "epic"],
+  ["Micky van de Ven", "Tottenham", "DEF", "superRare"],
+  ["Destiny Udogie", "Tottenham", "DEF", "superRare"],
+  ["Pedro Porro", "Tottenham", "DEF", "superRare"],
+  ["Radu Dragusin", "Tottenham", "DEF", "rare"],
+  ["Guglielmo Vicario", "Tottenham", "GK", "rare"],
+  ["Fraser Forster", "Tottenham", "GK", "rare"],
+  ["Son Heung-min", "Tottenham", "FWD", "epic"],
+  ["Dominic Solanke", "Tottenham", "FWD", "superRare"],
+  ["Brennan Johnson", "Tottenham", "FWD", "superRare"],
+  ["Rodrigo Bentancur", "Tottenham", "MID", "superRare"],
+  ["James Maddison", "Tottenham", "MID", "superRare"],
+  ["Yves Bissouma", "Tottenham", "MID", "rare"],
+  ["Pape Matar Sarr", "Tottenham", "MID", "rare"],
+  ["Lucas Bergvall", "Tottenham", "MID", "rare"],
+
+  // Manchester United
+  ["Bruno Fernandes", "Manchester United", "MID", "epic"],
+  ["Kobbie Mainoo", "Manchester United", "MID", "superRare"],
+  ["Casemiro", "Manchester United", "MID", "superRare"],
+  ["Manuel Ugarte", "Manchester United", "MID", "rare"],
+  ["Mason Mount", "Manchester United", "MID", "rare"],
+  ["Andre Onana", "Manchester United", "GK", "superRare"],
+  ["Altay Bayindir", "Manchester United", "GK", "rare"],
+  ["Lisandro Martinez", "Manchester United", "DEF", "superRare"],
+  ["Matthijs de Ligt", "Manchester United", "DEF", "superRare"],
+  ["Diogo Dalot", "Manchester United", "DEF", "rare"],
+  ["Luke Shaw", "Manchester United", "DEF", "rare"],
+  ["Noussair Mazraoui", "Manchester United", "DEF", "rare"],
+  ["Marcus Rashford", "Manchester United", "FWD", "superRare"],
+  ["Rasmus Hojlund", "Manchester United", "FWD", "superRare"],
+  ["Amad Diallo", "Manchester United", "FWD", "rare"],
+
+  // Newcastle United
+  ["Bruno Guimaraes", "Newcastle United", "MID", "epic"],
+  ["Joelinton", "Newcastle United", "MID", "superRare"],
+  ["Sandro Tonali", "Newcastle United", "MID", "superRare"],
+  ["Joe Willock", "Newcastle United", "MID", "rare"],
+  ["Sean Longstaff", "Newcastle United", "MID", "rare"],
+  ["Nick Pope", "Newcastle United", "GK", "rare"],
+  ["Martin Dubravka", "Newcastle United", "GK", "rare"],
+  ["Sven Botman", "Newcastle United", "DEF", "superRare"],
+  ["Fabian Schar", "Newcastle United", "DEF", "superRare"],
+  ["Tino Livramento", "Newcastle United", "DEF", "superRare"],
+  ["Kieran Trippier", "Newcastle United", "DEF", "rare"],
+  ["Dan Burn", "Newcastle United", "DEF", "rare"],
+  ["Alexander Isak", "Newcastle United", "FWD", "epic"],
+  ["Anthony Gordon", "Newcastle United", "FWD", "superRare"],
+  ["Harvey Barnes", "Newcastle United", "FWD", "rare"],
+
+  // Aston Villa
+  ["Emiliano Martinez", "Aston Villa", "GK", "superRare"],
+  ["Robin Olsen", "Aston Villa", "GK", "rare"],
+  ["Ezri Konsa", "Aston Villa", "DEF", "superRare"],
+  ["Pau Torres", "Aston Villa", "DEF", "superRare"],
+  ["Matty Cash", "Aston Villa", "DEF", "rare"],
+  ["Lucas Digne", "Aston Villa", "DEF", "rare"],
+  ["Tyrone Mings", "Aston Villa", "DEF", "rare"],
+  ["John McGinn", "Aston Villa", "MID", "superRare"],
+  ["Youri Tielemans", "Aston Villa", "MID", "superRare"],
+  ["Morgan Rogers", "Aston Villa", "MID", "superRare"],
+  ["Boubacar Kamara", "Aston Villa", "MID", "rare"],
+  ["Jacob Ramsey", "Aston Villa", "MID", "rare"],
+  ["Ollie Watkins", "Aston Villa", "FWD", "epic"],
+  ["Leon Bailey", "Aston Villa", "FWD", "superRare"],
+  ["Jhon Duran", "Aston Villa", "FWD", "superRare"],
+];
+
+export const FOOTBALLER_CATALOGUE: readonly PlayerCard[] = ENTRIES.map(
+  ([footballerName, club, position, rarity]) => ({
+    footballerName,
+    club,
+    position,
+    rarity,
+  }),
+);
