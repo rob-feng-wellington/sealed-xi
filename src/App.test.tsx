@@ -62,10 +62,12 @@ describe("App", () => {
     );
   });
 
-  it("shows the league home after creating a league", async () => {
+  it("shows the league home and this week's tasks after creating a league", async () => {
     await signUpAndCreateLeague();
 
     expect(screen.getByText("把邀请码发给朋友，他们输入即可加入。")).toBeInTheDocument();
+    expect(screen.getByText("本周任务")).toBeInTheDocument();
+    expect(await screen.findByText("提交暂定阵容")).toBeInTheDocument();
   });
 
   it("opens this Gameweek's packs from the Private league home", async () => {

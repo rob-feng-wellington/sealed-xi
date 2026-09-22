@@ -9,7 +9,15 @@ import { AuthForm } from "./components/AuthForm.js";
 import { GameweekScreen } from "./components/GameweekScreen.js";
 import { LeagueGate } from "./components/LeagueGate.js";
 import { LeagueHome } from "./components/LeagueHome.js";
-import { currentGameweekId } from "./gameweek/index.js";
+import { TaskCapPanel } from "./components/TaskCapPanel.js";
+import {
+  createPackService,
+  createTaskCapService,
+  currentGameweekId,
+  LocalStorageLineupStore,
+  LocalStoragePoolStore,
+  LocalStorageTaskCapStore,
+} from "./gameweek/index.js";
 import {
   createLeagueService,
   LocalStorageLeagueStore,
@@ -18,6 +26,14 @@ import {
 
 const authService = createAuthService(new LocalStorageAuthStore());
 const leagueService = createLeagueService(new LocalStorageLeagueStore());
+const packService = createPackService(new LocalStoragePoolStore());
+const taskCapService = createTaskCapService(
+  new LocalStorageTaskCapStore(),
+  new LocalStorageLeagueStore(),
+  new LocalStorageLineupStore(),
+  undefined,
+  packService,
+);
 
 function Home() {
   const { manager, signIn, signOut } = useSession();
@@ -110,6 +126,8 @@ function Home() {
     );
   }
 
+  const gameweekId = currentGameweekId();
+
   return (
     <div className="w-full max-w-3xl space-y-8 py-8">
       <LeagueHome
@@ -117,7 +135,27 @@ function Home() {
         managerUsername={manager.username}
         onSignOut={signOut}
       />
-      <GameweekScreen managerId={manager.id} gameweekId={currentGameweekId()} />
+      <TaskCapPanel
+        managerId={manager.id}
+        league={league}
+        gameweekId={gameweekId}
+        taskCapService={taskCapService}
+      />
+      <GameweekScreen
+        managerId={manager.id}
+        gameweekId={gameweekId}
+        packService={packService}
+        onTentativeSaved={() => {
+          void taskCapService.markTentativeLineup(
+            manager.id,
+            gameweekId,
+            new Date(),
+          );
+        }}
+        onPoolOpened={() => {
+          void taskCapService.ensureReward(manager.id, gameweekId);
+        }}
+      />
     </div>
   );
 }

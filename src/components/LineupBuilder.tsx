@@ -54,6 +54,7 @@ interface LineupBuilderProps {
   pool: SealedPool;
   lineupService?: LineupService;
   now?: Date;
+  onTentativeSaved?: () => void;
 }
 
 export function LineupBuilder({
@@ -62,6 +63,7 @@ export function LineupBuilder({
   pool,
   lineupService = defaultLineupService,
   now,
+  onTentativeSaved,
 }: LineupBuilderProps) {
   const clock = useMemo(() => now ?? new Date(), [now]);
   const [draft, setDraft] = useState<LineupDraft>(() => emptyDraft());
@@ -119,6 +121,7 @@ export function LineupBuilder({
     if (result.kind === "ok") {
       setStatus(result.state.status);
       setMessage("草稿已保存。");
+      onTentativeSaved?.();
     } else if (result.kind === "past-deadline") {
       setMessage("已过截止时间，阵容不能修改。");
     } else if (result.kind === "locked") {
@@ -131,6 +134,7 @@ export function LineupBuilder({
     if (result.kind === "ok") {
       setStatus(result.state.status);
       setMessage("阵容已锁定。");
+      onTentativeSaved?.();
     } else if (result.kind === "invalid") {
       setMessage(result.issues.map(issueMessage).join(" "));
     } else if (result.kind === "past-deadline") {

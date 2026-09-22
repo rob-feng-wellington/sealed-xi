@@ -18,6 +18,8 @@ interface GameweekScreenProps {
   packService?: PackService;
   lineupService?: LineupService;
   now?: Date;
+  onTentativeSaved?: () => void;
+  onPoolOpened?: () => void;
 }
 
 export function GameweekScreen({
@@ -26,6 +28,8 @@ export function GameweekScreen({
   packService = defaultPackService,
   lineupService,
   now,
+  onTentativeSaved,
+  onPoolOpened,
 }: GameweekScreenProps) {
   const [pool, setPool] = useState<SealedPool | null | undefined>(undefined);
   const [opening, setOpening] = useState(false);
@@ -45,6 +49,7 @@ export function GameweekScreen({
     const opened = await packService.openPacks(managerId, gameweekId);
     setPool(opened);
     setOpening(false);
+    onPoolOpened?.();
   }
 
   return (
@@ -99,6 +104,7 @@ export function GameweekScreen({
             pool={pool}
             lineupService={lineupService}
             now={now}
+            onTentativeSaved={onTentativeSaved}
           />
         </>
       )}

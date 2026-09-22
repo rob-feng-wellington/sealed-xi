@@ -12,6 +12,7 @@ export type SealedPool = {
   gameweekId: GameweekId;
   basePack: readonly PlayerCard[];
   skillPack: readonly SkillWager[];
+  bonusPulls?: { player: number; skill: number };
 };
 
 export function hasPlayingRights(pool: SealedPool, gameweekId: GameweekId): boolean {

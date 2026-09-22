@@ -111,6 +111,44 @@ describe("PackService.openPacks", () => {
   });
 });
 
+describe("PackService.grantBonusPulls", () => {
+  let store: InMemoryPoolStore;
+  let service: PackService;
+
+  beforeEach(async () => {
+    store = new InMemoryPoolStore();
+    service = new PackService(store, FOOTBALLER_CATALOGUE, SKILL_CATALOGUE, rng(13));
+    await service.openPacks("manager-1", "2025-W38");
+  });
+
+  it("appends the earned pulls to the open pool", async () => {
+    const pool = await service.grantBonusPulls("manager-1", "2025-W38", 2, 1);
+
+    expect(pool!.basePack).toHaveLength(26);
+    expect(pool!.skillPack).toHaveLength(15);
+    expect(pool!.bonusPulls).toEqual({ player: 2, skill: 1 });
+  });
+
+  it("stays idempotent", async () => {
+    await service.grantBonusPulls("manager-1", "2025-W38", 2, 1);
+    const again = await service.grantBonusPulls("manager-1", "2025-W38", 2, 1);
+
+    expect(again!.basePack).toHaveLength(26);
+    expect(again!.skillPack).toHaveLength(15);
+  });
+
+  it("does not duplicate a footballer already in the pool", async () => {
+    const pool = await service.grantBonusPulls("manager-1", "2025-W38", 2, 1);
+    const names = pool!.basePack.map((card) => card.footballerName);
+
+    expect(new Set(names).size).toBe(names.length);
+  });
+
+  it("does nothing without an open pool", async () => {
+    expect(await service.grantBonusPulls("manager-2", "2025-W38", 2, 1)).toBeUndefined();
+  });
+});
+
 describe("LocalStoragePoolStore", () => {
   beforeEach(() => {
     localStorage.clear();

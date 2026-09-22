@@ -43,3 +43,24 @@ export {
 } from "./lineup-store.ts";
 export { LineupService, createLineupService } from "./lineup-service.ts";
 export type { LineupResult } from "./lineup-service.ts";
+
+export {
+  TASK_CAP_ITEMS,
+  TASK_CAP_REWARD,
+  emptyTaskCap,
+  isTaskCapComplete,
+  taskCapReward,
+} from "./task-cap.ts";
+export type {
+  TaskCapItem,
+  TaskCapReward,
+  TaskCapState,
+  TaskCapTasks,
+} from "./task-cap.ts";
+export type { TaskCapStore } from "./task-cap-store.ts";
+export {
+  InMemoryTaskCapStore,
+  LocalStorageTaskCapStore,
+} from "./task-cap-store.ts";
+export { TaskCapService, createTaskCapService } from "./task-cap-service.ts";
+export type { PeekResult, TaskCapResult } from "./task-cap-service.ts";
