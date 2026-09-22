@@ -4,11 +4,11 @@
 
 **Blocked by:** 01 Catalogues and Match points settlement; 03 Skill wager settlement
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] 0 minutes triggers Auto-sub walk of ordered bench for a still-legal Lineup
-- [ ] Auto-sub scores Match points and is Naked
-- [ ] Worn Skill stays on the Blank starter and misses
-- [ ] >=1 minute: no Auto-sub; appearing bench does not score
-- [ ] No legal replacement: empty slot, 0 Match points, Skill miss
-- [ ] Tests stay on the Gameweek settlement seam
+- [x] 0 minutes triggers Auto-sub walk of ordered bench for a still-legal Lineup
+- [x] Auto-sub scores Match points and is Naked
+- [x] Worn Skill stays on the Blank starter and misses
+- [x] >=1 minute: no Auto-sub; appearing bench does not score
+- [x] No legal replacement: empty slot, 0 Match points, Skill miss
+- [x] Tests stay on the Gameweek settlement seam
