@@ -9,13 +9,17 @@ import { AuthForm } from "./components/AuthForm.js";
 import { GameweekScreen } from "./components/GameweekScreen.js";
 import { LeagueGate } from "./components/LeagueGate.js";
 import { LeagueHome } from "./components/LeagueHome.js";
+import { RevealPanel } from "./components/RevealPanel.js";
 import { TaskCapPanel } from "./components/TaskCapPanel.js";
 import {
   createPackService,
+  createSettlementService,
   createTaskCapService,
   currentGameweekId,
   LocalStorageLineupStore,
+  LocalStorageMatchFactsStore,
   LocalStoragePoolStore,
+  LocalStorageSettlementStore,
   LocalStorageTaskCapStore,
 } from "./gameweek/index.js";
 import {
@@ -33,6 +37,12 @@ const taskCapService = createTaskCapService(
   new LocalStorageLineupStore(),
   undefined,
   packService,
+);
+const settlementService = createSettlementService(
+  new LocalStorageSettlementStore(),
+  new LocalStorageLineupStore(),
+  new LocalStoragePoolStore(),
+  new LocalStorageMatchFactsStore(),
 );
 
 function Home() {
@@ -155,6 +165,11 @@ function Home() {
         onPoolOpened={() => {
           void taskCapService.ensureReward(manager.id, gameweekId);
         }}
+      />
+      <RevealPanel
+        league={league}
+        gameweekId={gameweekId}
+        settlementService={settlementService}
       />
     </div>
   );

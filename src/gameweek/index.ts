@@ -64,3 +64,27 @@ export {
 } from "./task-cap-store.ts";
 export { TaskCapService, createTaskCapService } from "./task-cap-service.ts";
 export type { PeekResult, TaskCapResult } from "./task-cap-service.ts";
+
+export { fixtureKey, ingestFixture } from "./ingest.ts";
+export type {
+  IngestedFixture,
+  IngestedPlayerFacts,
+  VendorFixture,
+  VendorPlayerStat,
+} from "./ingest.ts";
+export type { MatchFactsStore } from "./match-facts-store.ts";
+export {
+  InMemoryMatchFactsStore,
+  LocalStorageMatchFactsStore,
+  factsByFootballer,
+} from "./match-facts-store.ts";
+export type { ManagerSettlement, SettlementStore } from "./settlement.ts";
+export {
+  InMemorySettlementStore,
+  LocalStorageSettlementStore,
+} from "./settlement.ts";
+export {
+  SettlementService,
+  createSettlementService,
+} from "./settlement-service.ts";
+export type { LeagueTableRow, SettleResult } from "./settlement-service.ts";
