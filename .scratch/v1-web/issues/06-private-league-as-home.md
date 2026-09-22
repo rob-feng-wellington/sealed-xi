@@ -4,9 +4,9 @@
 
 **Blocked by:** 02 React site and manager accounts
 
-**Status:** ready-for-agent
+**Status:** done
 
-- [ ] A new manager must create or join a Private league before other play
-- [ ] A host can create a league and share a join path
-- [ ] A manager can join with that path
-- [ ] Home after join is the Private league, not the Open table
+- [x] A new manager must create or join a Private league before other play
+- [x] A host can create a league and share a join path
+- [x] A manager can join with that path
+- [x] Home after join is the Private league, not the Open table
