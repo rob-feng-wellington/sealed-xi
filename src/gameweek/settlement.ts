@@ -25,6 +25,7 @@ export interface SettlementStore {
     gameweekId: GameweekId,
   ): Promise<readonly ManagerSettlement[]>;
   getManagerSettlements(managerId: string): Promise<readonly ManagerSettlement[]>;
+  getAllSettlements(): Promise<readonly ManagerSettlement[]>;
 }
 
 const SETTLEMENT_STORAGE_KEY = "sealed-xi:settlements";
@@ -79,6 +80,10 @@ export class LocalStorageSettlementStore implements SettlementStore {
       (settlement) => settlement.managerId === managerId,
     );
   }
+
+  async getAllSettlements(): Promise<readonly ManagerSettlement[]> {
+    return Object.values(this.load().settlements);
+  }
 }
 
 export class InMemorySettlementStore implements SettlementStore {
@@ -112,6 +117,10 @@ export class InMemorySettlementStore implements SettlementStore {
     return [...this.settlements.values()].filter(
       (settlement) => settlement.managerId === managerId,
     );
+  }
+
+  async getAllSettlements(): Promise<readonly ManagerSettlement[]> {
+    return [...this.settlements.values()];
   }
 
   clear(): void {

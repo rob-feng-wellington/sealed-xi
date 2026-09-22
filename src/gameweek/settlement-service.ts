@@ -27,6 +27,15 @@ export type LeagueTableRow = {
   seasonPoints: number;
 };
 
+/**
+ * A row on the global Open table. It is a read model of the same
+ * ManagerSettlement totals, not a second scoring formula.
+ */
+export type OpenTableRow = {
+  managerId: string;
+  points: number;
+};
+
 const EMPTY_LINEUP: LockedLineup = { starters: [], bench: [], captainIndex: -1 };
 
 export class SettlementService {
@@ -98,6 +107,33 @@ export class SettlementService {
     return league.memberIds
       .map((managerId) => byManager.get(managerId))
       .filter((settlement): settlement is ManagerSettlement => settlement !== undefined);
+  }
+
+  /** Weekly board over every manager settled for the Gameweek. */
+  async openWeeklyTable(gameweekId: GameweekId): Promise<readonly OpenTableRow[]> {
+    const settlements = await this.settlements.getGameweekSettlements(gameweekId);
+    return settlements.map((settlement) => ({
+      managerId: settlement.managerId,
+      points: settlement.total,
+    }));
+  }
+
+  /** Season-total board over every manager with a settlement. */
+  async openSeasonTable(): Promise<readonly OpenTableRow[]> {
+    const totals = await this.seasonTotals();
+    return [...totals.entries()].map(([managerId, points]) => ({ managerId, points }));
+  }
+
+  private async seasonTotals(): Promise<Map<string, number>> {
+    const all = await this.settlements.getAllSettlements();
+    const totals = new Map<string, number>();
+    for (const settlement of all) {
+      totals.set(
+        settlement.managerId,
+        (totals.get(settlement.managerId) ?? 0) + settlement.total,
+      );
+    }
+    return totals;
   }
 
   private async settleManager(

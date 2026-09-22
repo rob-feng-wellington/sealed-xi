@@ -93,7 +93,7 @@ export {
   SettlementService,
   createSettlementService,
 } from "./settlement-service.ts";
-export type { LeagueTableRow, SettleResult } from "./settlement-service.ts";
+export type { LeagueTableRow, OpenTableRow, SettleResult } from "./settlement-service.ts";
 
 export {
   ALBUM_PULL,

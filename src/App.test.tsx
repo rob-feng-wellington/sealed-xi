@@ -60,6 +60,8 @@ describe("App", () => {
     await waitFor(() =>
       expect(screen.getByText("加入私人联赛")).toBeInTheDocument(),
     );
+    // A manager without a league does not land on the Open table plaza.
+    expect(screen.queryByText("广场")).not.toBeInTheDocument();
   });
 
   it("shows the league home and this week's tasks after creating a league", async () => {
@@ -70,6 +72,7 @@ describe("App", () => {
     expect(await screen.findByText("提交暂定阵容")).toBeInTheDocument();
     expect(screen.getByText("揭晓")).toBeInTheDocument();
     expect(await screen.findByText("图鉴")).toBeInTheDocument();
+    expect(await screen.findByText("广场")).toBeInTheDocument();
   });
 
   it("opens this Gameweek's packs from the Private league home", async () => {

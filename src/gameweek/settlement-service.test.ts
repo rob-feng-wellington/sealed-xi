@@ -189,4 +189,43 @@ describe("SettlementService", () => {
     expect(await service.seasonTotal("a")).toBe(18);
     expect(await settlements.getGameweekSettlements(GW38)).toHaveLength(2);
   });
+
+  it("builds the Open table from the same settlements, not a second formula", async () => {
+    const emptyLineup = { starters: [], bench: [], captainIndex: -1 };
+    await settlements.saveSettlement({
+      managerId: "x",
+      gameweekId: GW38,
+      lineup: emptyLineup,
+      slots: [],
+      matchPoints: 20,
+      skillPoints: 0,
+      total: 20,
+    });
+    await settlements.saveSettlement({
+      managerId: "y",
+      gameweekId: GW38,
+      lineup: emptyLineup,
+      slots: [],
+      matchPoints: 15,
+      skillPoints: 0,
+      total: 15,
+    });
+    await settlements.saveSettlement({
+      managerId: "x",
+      gameweekId: GW39,
+      lineup: emptyLineup,
+      slots: [],
+      matchPoints: 5,
+      skillPoints: 0,
+      total: 5,
+    });
+
+    expect(await service.openWeeklyTable(GW38)).toEqual([
+      { managerId: "x", points: 20 },
+      { managerId: "y", points: 15 },
+    ]);
+    const season = await service.openSeasonTable();
+    expect(season).toContainEqual({ managerId: "x", points: 25 });
+    expect(season).toContainEqual({ managerId: "y", points: 15 });
+  });
 });

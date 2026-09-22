@@ -10,6 +10,7 @@ import { AuthForm } from "./components/AuthForm.js";
 import { GameweekScreen } from "./components/GameweekScreen.js";
 import { LeagueGate } from "./components/LeagueGate.js";
 import { LeagueHome } from "./components/LeagueHome.js";
+import { OpenTablePanel } from "./components/OpenTablePanel.js";
 import { RevealPanel } from "./components/RevealPanel.js";
 import { TaskCapPanel } from "./components/TaskCapPanel.js";
 import {
@@ -180,6 +181,10 @@ function Home() {
       />
       <RevealPanel
         league={league}
+        gameweekId={gameweekId}
+        settlementService={settlementService}
+      />
+      <OpenTablePanel
         gameweekId={gameweekId}
         settlementService={settlementService}
       />
